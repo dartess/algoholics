@@ -4,11 +4,11 @@ const list = new SinglyLinkedList();
 
 console.log(`${list}`);
 
-list.insertValueAtBeginning('e');
-list.insertValueAtEnd('t');
-list.insertValueAtBeginning('w');
-list.insertValueAtBeginning('q');
-list.insertValueAtEnd('y');
-list.insertAfterReferenceValue('r', 'e');
+list.addFirst('e');
+list.add('t');
+list.addFirst('w');
+list.addFirst('q');
+list.add('y');
+list.addAfter('r', 'e');
 
 console.log(`${list}`); // q, w, e, r, t, y

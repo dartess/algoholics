@@ -1,10 +1,10 @@
 /**
  * Элемент односвязного списка
  */
-class SinglyLinkedListNode<T> {
+class Node<T> {
     constructor(
-        public readonly value: T,
-        public next: SinglyLinkedListNode<T> | null = null,
+        public readonly item: T,
+        public next: Node<T> | null = null,
     ) {}
 }
 
@@ -12,77 +12,187 @@ class SinglyLinkedListNode<T> {
  * Односвязный список (однонаправленный связный список)
  */
 export class SinglyLinkedList<T> {
-    private head: SinglyLinkedListNode<T> | null = null;
+    private first: Node<T> | null = null;
 
     /**
      * Операция, проверяющая список на пустоту
      * @returns результат
      */
     isEmpty(): boolean {
-        return this.head === null;
+        return this.first === null;
     }
 
     /**
-     * Операция добавления значения в список (в начало)
-     * @param newValue добавляемое значение
+     * Метод отображает присутствует ли искомое значение в списке
+     * @param item искомое значение
+     * @returns результат
      */
-    insertValueAtBeginning(newValue: T): void {
-        const newNode = new SinglyLinkedListNode(newValue, this.head);
-        this.head = newNode;
+    find(item: T): boolean {
+        let node = this.first;
+        while(node) {
+            if (node.item === item) {
+                return true;
+            }
+            node = node.next; 
+        }
+        return false;
     }
 
     /**
-     * Операция добавления значения в список (в конец)
-     * @param newValue добавляемое значение
+     * Метод добавления значения в конец списка
+     * @param newItem добавляемое значение
      */
-    insertValueAtEnd(newValue: T): void {
-        let lastNode = this.head;
+    add(newItem: T): void {
+        let lastNode = this.first;
         while (lastNode?.next) {
             lastNode = lastNode.next;
         }
-        const newNode = new SinglyLinkedListNode(newValue);
+        const newNode = new Node(newItem);
         if (lastNode) {
             lastNode.next = newNode;
         } else {
-            this.head = newNode;
+            this.first = newNode;
         }
     }
 
     /**
-     * Операция добавления значения в список (после другого значения)
-     * @param newValue добавляемое значение
-     * @param referenceValue значение, после которого необходимо произвести добавление, если оно будет найдено
+     * Метод добавления значения в начало списка
+     * @param newItem добавляемое значение
      */
-    insertAfterReferenceValue(newValue: T, referenceValue: T): void {
-        let referenceNode = this.head;
+    addFirst(newItem: T): void {
+        const newNode = new Node(newItem, this.first);
+        this.first = newNode;
+    }
 
-        while (referenceNode?.value !== referenceValue && referenceNode?.next) {
+
+    /**
+     * Метод добавления значения после искомого (или в конец списка)
+     * @param newItem добавляемое значение
+     * @param referenceItem значение, после которого необходимо произвести добавление, если оно будет найдено
+     */
+    addAfter(newItem: T, referenceItem: T): void {
+        let referenceNode = this.first;
+
+        while (referenceNode?.item !== referenceItem && referenceNode?.next) {
             referenceNode = referenceNode.next;
         }
 
-        if (referenceNode && referenceNode.value === referenceValue) {
-            const newNode = new SinglyLinkedListNode(newValue, referenceNode.next);
+        if (referenceNode && referenceNode.item === referenceItem) {
+            const newNode = new Node(newItem, referenceNode.next);
             referenceNode.next =  newNode;
+        } else {
+            const newNode = new Node(newItem);
+            if (referenceNode) {
+                referenceNode.next = newNode;
+            } else {
+                this.first = newNode;
+            }
         }
+    }
+
+    /**
+     * Метод удаления первого элемента списка
+     */
+    removeFirst(): void {
+        if (this.first) {
+            this.first = this.first.next;
+        }
+    }
+
+    /**
+     * Метод удаления последнего элемента списка
+     */
+    removeLast(): void {
+        let previousLastNode = null;
+        let lastNode = this.first;
+        while (lastNode?.next) {
+            previousLastNode = lastNode;
+            lastNode = lastNode.next;
+        }
+        if (lastNode && previousLastNode) {
+            previousLastNode.next = null;
+        }
+    }
+
+    /**
+     * Метод удаления всех элементов списка равных ключу поиска
+     */
+    remove(item: T): void {
+        let previousNode: Node<T> | null = null;
+        let node = this.first;
+        while (node) {
+            if (node.item === item) {
+                if (previousNode) {
+                    previousNode.next = node.next;
+                } else {
+                    this.first = node.next;
+                }
+            }
+            previousNode = node;
+            node = node.next;
+        }
+    }
+
+    /**
+     * Метод создания копии объекта списка
+     */
+    copy(): SinglyLinkedList<T> {
+        const copyOfList = new SinglyLinkedList<T>();
+        let node = this.first;
+        while (node) {
+            copyOfList.add(node.item);
+            node = node.next;
+        }
+        return copyOfList;
+    }
+
+    /**
+     * Метод создания копии объекта списка с перемешанными связями в случайном порядке
+     */
+    shuffle(): SinglyLinkedList<T> {
+        const copyOfList = new SinglyLinkedList<T>();
+
+        SinglyLinkedList.shuffleArray(this.getAllItems())
+            .forEach((item) => copyOfList.add(item));
+
+        return copyOfList;
     }
 
     /**
      * Операция получения массива значений
      */
-    getAllValues(): Array<T> {
-        const allValues: Array<T> = [];
-        let node = this.head;
+    private getAllItems(): Array<T> {
+        const allItems: Array<T> = [];
+        let node = this.first;
         while(node) {
-            allValues.push(node.value)
+            allItems.push(node.item)
             node = node.next; 
         }
-        return allValues;
+        return allItems;
     }
 
     /**
      * Приведение значений списка к строке
      */
     toString(): string {
-        return this.getAllValues().join(', ');
+        return this.getAllItems().join(', ');
+    }
+
+    /**
+     * Хелпер для перемешивания массива
+     * @param array
+     */
+    private static shuffleArray<T>(array: Array<T>): Array<T> {
+        let ctr = array.length;
+        let temp;
+        let index;
+        while (ctr > 0) {
+            index = Math.floor(Math.random() * ctr);
+            ctr--;
+            temp = array[ctr];
+            array[ctr] = array[index];
+            array[index] = temp;
+        }
+        return array;
     }
 }
