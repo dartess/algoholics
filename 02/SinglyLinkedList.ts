@@ -116,6 +116,7 @@ export class SinglyLinkedList<T> {
 
     /**
      * Метод удаления всех элементов списка равных ключу поиска
+     * @param newItem искомое значение
      */
     remove(item: T): void {
         let previousNode: Node<T> | null = null;
@@ -135,6 +136,7 @@ export class SinglyLinkedList<T> {
 
     /**
      * Метод создания копии объекта списка
+     * @returns копия списка
      */
     copy(): SinglyLinkedList<T> {
         const copyOfList = new SinglyLinkedList<T>();
@@ -148,6 +150,7 @@ export class SinglyLinkedList<T> {
 
     /**
      * Метод создания копии объекта списка с перемешанными связями в случайном порядке
+     * @returns перемешанная копия списка
      */
     shuffle(): SinglyLinkedList<T> {
         const copyOfList = new SinglyLinkedList<T>();
@@ -160,6 +163,7 @@ export class SinglyLinkedList<T> {
 
     /**
      * Операция получения массива значений
+     * @returns массив значений
      */
     private getAllItems(): Array<T> {
         const allItems: Array<T> = [];
@@ -180,7 +184,8 @@ export class SinglyLinkedList<T> {
 
     /**
      * Хелпер для перемешивания массива
-     * @param array
+     * @param array массив для перемешивания
+     * @returns перемешанный массив
      */
     private static shuffleArray<T>(array: Array<T>): Array<T> {
         let ctr = array.length;
