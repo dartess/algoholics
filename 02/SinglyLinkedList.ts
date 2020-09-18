@@ -64,7 +64,6 @@ export class SinglyLinkedList<T> {
         this.first = newNode;
     }
 
-
     /**
      * Метод добавления значения после искомого (или в конец списка)
      * @param newItem добавляемое значение
@@ -78,6 +77,33 @@ export class SinglyLinkedList<T> {
         }
 
         if (referenceNode && referenceNode.item === referenceItem) {
+            const newNode = new Node(newItem, referenceNode.next);
+            referenceNode.next =  newNode;
+        } else {
+            const newNode = new Node(newItem);
+            if (referenceNode) {
+                referenceNode.next = newNode;
+            } else {
+                this.first = newNode;
+            }
+        }
+    }
+
+    /**
+     * Метод добавления значения после определённого по порядку элемента списка (или в конец списка)
+     * @param newItem добавляемое значение
+     * @param referenceIndex индекс элемента в списке, после которого нужно добавить элемент
+     */
+    addAfterIndex(newItem: T, referenceIndex: number): void {
+        let currentIndex = 0;
+        let referenceNode = this.first;
+
+        while (currentIndex !== referenceIndex && referenceNode?.next) {
+            referenceNode = referenceNode.next;
+            currentIndex++;
+        }
+
+        if (referenceNode && currentIndex === referenceIndex) {
             const newNode = new Node(newItem, referenceNode.next);
             referenceNode.next =  newNode;
         } else {
@@ -153,12 +179,34 @@ export class SinglyLinkedList<T> {
      * @returns перемешанная копия списка
      */
     shuffle(): SinglyLinkedList<T> {
-        const copyOfList = new SinglyLinkedList<T>();
+        const shuffledList = new SinglyLinkedList<T>();
 
-        SinglyLinkedList.shuffleArray(this.getAllItems())
-            .forEach((item) => copyOfList.add(item));
+        // элементов нет
+        if (this.first === null) {
+            return shuffledList;
+        }
 
-        return copyOfList;
+        shuffledList.add(this.first.item);
+
+        // элемент один
+        if (this.first.next === null) {
+            return shuffledList;
+        }
+
+        // элементов несколько
+        let lastItemIndex = 0;
+        let node: Node<T> | null = this.first.next;
+        while (node) {
+            let insertAfterIndex = SinglyLinkedList.getRandomInteger(-1, lastItemIndex);
+            if (insertAfterIndex === -1) {
+                shuffledList.addFirst(node.item);
+            } else {
+                shuffledList.addAfterIndex(node.item, insertAfterIndex);
+            }
+            lastItemIndex++;
+            node = node.next;
+        }
+        return shuffledList;
     }
 
     /**
@@ -183,21 +231,12 @@ export class SinglyLinkedList<T> {
     }
 
     /**
-     * Хелпер для перемешивания массива
-     * @param array массив для перемешивания
-     * @returns перемешанный массив
+     * Получить случайное число из диапазона
+     * @param from - от (включительно)
+     * @param to - до (включительно)
+     * @returns - случаное число
      */
-    private static shuffleArray<T>(array: Array<T>): Array<T> {
-        let ctr = array.length;
-        let temp;
-        let index;
-        while (ctr > 0) {
-            index = Math.floor(Math.random() * ctr);
-            ctr--;
-            temp = array[ctr];
-            array[ctr] = array[index];
-            array[index] = temp;
-        }
-        return array;
+    private static getRandomInteger(from: number, to: number): number {
+        return Math.floor(Math.random() * (to + 1 - from) + from);
     }
 }

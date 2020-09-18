@@ -20,18 +20,20 @@ console.log(`${tails}`);
 console.log(Math.abs(heads.tally() - tails.tally()));
 */
 
-import {SinglyLinkedList} from './SinglyLinkedList';
+import {SinglyLinkedList} from './SinglyLinkedList.ts';
 
 const list = new SinglyLinkedList();
 
-console.log(`${list}`);
+function* getRange(from: number, to: number) {
+    while (from <= to) {
+        yield from;
+        from++;
+    }
+}
 
-list.addFirst('e');
-list.add('t');
-list.addFirst('w');
-list.addFirst('q');
-list.add('y');
-list.addAfter('r', 'e');
+for (let i of getRange(0, 10)) {
+    list.add(i);
+}
 
-console.log(`${list}`); // q, w, e, r, t, y
-console.log(`${list.shuffle()}`); // t, y, w, e, q, r или что-то ещё
+console.log(`${list}`);             // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+console.log(`${list.shuffle()}`);   // 7, 0, 4, 10, 5, 1, 9, 2, 6, 8, 3
