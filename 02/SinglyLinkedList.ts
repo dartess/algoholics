@@ -1,18 +1,13 @@
-/**
- * Элемент односвязного списка
- */
-class Node<T> {
-    constructor(
-        public readonly item: T,
-        public next: Node<T> | null = null,
-    ) {}
+interface INode<T> {
+    readonly item: T;
+    next: INode<T> | null;
 }
 
 /**
  * Односвязный список (однонаправленный связный список)
  */
 export class SinglyLinkedList<T> {
-    private first: Node<T> | null = null;
+    private first: INode<T> | null = null;
 
     /**
      * Операция, проверяющая список на пустоту
@@ -47,7 +42,7 @@ export class SinglyLinkedList<T> {
         while (lastNode?.next) {
             lastNode = lastNode.next;
         }
-        const newNode = new Node(newItem);
+        const newNode = new SinglyLinkedList.Node(newItem);
         if (lastNode) {
             lastNode.next = newNode;
         } else {
@@ -60,7 +55,7 @@ export class SinglyLinkedList<T> {
      * @param newItem добавляемое значение
      */
     addFirst(newItem: T): void {
-        const newNode = new Node(newItem, this.first);
+        const newNode = new SinglyLinkedList.Node(newItem, this.first);
         this.first = newNode;
     }
 
@@ -77,10 +72,10 @@ export class SinglyLinkedList<T> {
         }
 
         if (referenceNode && referenceNode.item === referenceItem) {
-            const newNode = new Node(newItem, referenceNode.next);
+            const newNode = new SinglyLinkedList.Node(newItem, referenceNode.next);
             referenceNode.next =  newNode;
         } else {
-            const newNode = new Node(newItem);
+            const newNode = new SinglyLinkedList.Node(newItem);
             if (referenceNode) {
                 referenceNode.next = newNode;
             } else {
@@ -104,10 +99,10 @@ export class SinglyLinkedList<T> {
         }
 
         if (referenceNode && currentIndex === referenceIndex) {
-            const newNode = new Node(newItem, referenceNode.next);
+            const newNode = new SinglyLinkedList.Node(newItem, referenceNode.next);
             referenceNode.next =  newNode;
         } else {
-            const newNode = new Node(newItem);
+            const newNode = new SinglyLinkedList.Node(newItem);
             if (referenceNode) {
                 referenceNode.next = newNode;
             } else {
@@ -145,7 +140,7 @@ export class SinglyLinkedList<T> {
      * @param newItem искомое значение
      */
     remove(item: T): void {
-        let previousNode: Node<T> | null = null;
+        let previousNode: INode<T> | null = null;
         let node = this.first;
         while (node) {
             if (node.item === item) {
@@ -195,7 +190,7 @@ export class SinglyLinkedList<T> {
 
         // элементов несколько
         let lastItemIndex = 0;
-        let node: Node<T> | null = this.first.next;
+        let node: INode<T> | null = this.first.next;
         while (node) {
             let insertAfterIndex = SinglyLinkedList.getRandomInteger(-1, lastItemIndex);
             if (insertAfterIndex === -1) {
@@ -238,5 +233,15 @@ export class SinglyLinkedList<T> {
      */
     private static getRandomInteger(from: number, to: number): number {
         return Math.floor(Math.random() * (to + 1 - from) + from);
+    }
+
+    /**
+    * Класс элемента односвязного списка
+    */
+    private static Node = class<T> implements INode<T> {
+        constructor(
+            public readonly item: T,
+            public next: INode<T> | null = null,
+        ) {}
     }
 }
