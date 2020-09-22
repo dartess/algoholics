@@ -225,6 +225,15 @@ export class SinglyLinkedList<T> {
         return this.getAllItems().join(', ');
     }
 
+    /** Итератор по списку */
+    *[Symbol.iterator]() {
+        let node = this.first;
+        while(node) {
+            yield node.item;
+            node = node.next; 
+        }
+    };
+
     /**
      * Получить случайное число из диапазона
      * @param from - от (включительно)

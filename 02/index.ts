@@ -37,3 +37,7 @@ for (let i of getRange(0, 10)) {
 
 console.log(`${list}`);             // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 console.log(`${list.shuffle()}`);   // 7, 0, 4, 10, 5, 1, 9, 2, 6, 8, 3
+
+for (let item of list.shuffle()) {
+    console.log(item);
+}
